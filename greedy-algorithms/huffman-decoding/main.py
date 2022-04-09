@@ -8,22 +8,31 @@ class Node:
     left: Optional['Node'] = None
     right: Optional['Node'] = None
 
+    def __getitem__(self, key: str) -> 'Node':
+        if key == '0':
+            return self.left
+        elif key == '1':
+            return self.right
+        else:
+            raise ValueError('key must be 0 or 1')
+
+    def __setitem__(self, key: str, value: 'Node') -> None:
+        if key == '0':
+            self.left = value
+        elif key == '1':
+            self.right = value
+        else:
+            raise ValueError('key must be 0 or 1')
+
 
 def build_code_tree(codes: Mapping[str, str]) -> Node:
     head = Node()
     for symbol, code in codes.items():
         current = head
         for digit in code:
-            if digit == '0':
-                if not current.left:
-                    current.left = Node()
-                current = current.left
-            elif digit == '1':
-                if not current.right:
-                    current.right = Node()
-                current = current.right
-            else:
-                raise ValueError(f'Wrong Huffman code: {code}')
+            if not current[digit]:
+                current[digit] = Node()
+            current = current[digit]
         current.value = symbol
     return head
 
@@ -37,11 +46,7 @@ def solution(
     head_node = build_code_tree(codes)
     current_node = head_node
     for digit in encoded_str:
-        if digit == '0':
-            current_node = current_node.left
-        else:
-            current_node = current_node.right
-
+        current_node = current_node[digit]
         if current_node.value is not None:
             decoded_str += current_node.value
             current_node = head_node
