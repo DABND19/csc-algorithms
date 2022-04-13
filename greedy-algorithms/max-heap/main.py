@@ -1,33 +1,19 @@
 from numbers import Number
-from typing import List, Tuple
+from typing import List
 
 
-def get_parent_index(index: int) -> int:
-    if index == 0:
-        return 0
-    return (index - 1) // 2
+def sift_up(heap: List[Number], pos: int) -> None:
+    parent = (pos - 1) // 2
+    while pos and heap[pos] > heap[parent]:
+        heap[pos], heap[parent] = heap[parent], heap[pos]
+        pos = parent
+        parent = (pos - 1) // 2
 
 
-def get_children_indicies(index: int) -> Tuple[int, int]:
-    return 2 * index + 1, 2 * index + 2
-
-
-def push(heap: List[Number], item: Number) -> None:
-    i = len(heap)
-    heap.append(item)
-    while heap[i] > heap[get_parent_index(i)]:
-        heap[i], heap[get_parent_index(i)] = heap[get_parent_index(i)], heap[i]
-        i = get_parent_index(i)
-
-
-def pop(heap: List[Number]) -> None:
-    heap[0], heap[-1] = heap[-1], heap[0]
-    res = heap.pop()
-
-    i = 0
+def sift_down(heap: List[Number], pos: int) -> None:
     while True:
-        left, right = get_children_indicies(i)
-        largest = i
+        left, right = 2 * pos + 1, 2 * pos + 2
+        largest = pos
 
         if left < len(heap) and heap[largest] < heap[left]:
             largest = left
@@ -35,12 +21,22 @@ def pop(heap: List[Number]) -> None:
         if right < len(heap) and heap[largest] < heap[right]:
             largest = right
 
-        if largest == i:
+        if largest == pos:
             break
 
-        heap[i], heap[largest] = heap[largest], heap[i]
-        i = largest
+        heap[pos], heap[largest] = heap[largest], heap[pos]
+        pos = largest
 
+
+def push(heap: List[Number], item: Number) -> None:
+    heap.append(item)
+    sift_up(heap, len(heap) - 1)
+
+
+def pop(heap: List[Number]) -> None:
+    heap[0], heap[-1] = heap[-1], heap[0]
+    res = heap.pop()
+    sift_down(heap, 0)
     return res
 
 

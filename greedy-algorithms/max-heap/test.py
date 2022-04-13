@@ -3,13 +3,13 @@ import random
 from typing import List
 import unittest
 
-from main import push, pop, get_children_indicies
+from main import push, pop
 
 
 def is_max_heap(heap: List[Number]) -> bool:
     res = True
     for current, value in enumerate(heap):
-        left, right = get_children_indicies(current)
+        left, right = 2 * current + 1, 2 * current + 2
 
         if left < len(heap):
             res = res and value >= heap[left]
